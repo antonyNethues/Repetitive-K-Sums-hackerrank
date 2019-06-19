@@ -1,56 +1,45 @@
 import Foundation
-
-func sequence(sum:[Int],repetations:Int,numberOfItems:Int) -> String {
-    let sum = sum.sorted()
-    var x:[Int] = []
-    x.append((sum.first ?? 0)/repetations)
-    return getTheNextNumber(values: x, sum: sum, previousVal: x[0] , rep: repetations, numberOfItems: numberOfItems-1).reduce("", { (result, val) -> String in
-        return result + "\(val)" + " "
-    })
-}
-
-func getTheNextNumber(values:[Int],sum:[Int],previousVal:Int,rep:Int,numberOfItems:Int) -> [Int] {
-    var values = values
-    
-    if (numberOfItems < 1) {
-        return values
+ 
+// Enter your code here
+    func indexOfNextLargest(array: [Int], num: Int, start: Int) -> Int {
+        var index = start
+        while (array[index] <= num) {
+            index += 1
+        }
+        return index
     }
-
-    let z = sum.map { (val) -> Int in
-        return val - (previousVal * rep)
-        }.filter { (val) -> Bool in
-            return (val > 0)
+ 
+// read in number of test casese and declare variables to be used
+let numTestCases = Int(readLine()!)!
+var arr = [Int]()
+var n: Int = 1
+var k: Int = 1
+var current: Int = 1
+var result = [Int]()
+var index: Int = 0
+ 
+for _ in 1...numTestCases {
+// read the info on the test case
+    arr = readLine()!.components(separatedBy: " ").map{ Int($0)! }
+    n = arr[0]
+    k = arr[1]
+    arr = readLine()!.components(separatedBy: " ").map{ Int($0)! }
+    arr.sort() // needed for the algorithm
+   
+    current = arr[0]/k
+    result = [current]
+    index = 0
+    if n==1 {
+        result.forEach {print($0," ", terminator:"")}
+        print("")
+        continue
     }
-    values.append((z.first ?? 0) + previousVal)
-    
-    
-    return getTheNextNumber(values: values, sum: sum, previousVal: values.last ?? 0, rep: rep,numberOfItems: numberOfItems - 1)
-}
-
-// Enter your code here 
-let fileName = ProcessInfo.processInfo.environment["OUTPUT_PATH"]!
-FileManager.default.createFile(atPath: fileName, contents: nil, attributes: nil)
-let fileHandle = FileHandle(forWritingAtPath: fileName)!
-
-guard let numberOfTestCases = readLine() else { fatalError("Bad input") }
-let nm = Int(numberOfTestCases) ?? 0
-
-for _ in 0..<nm{
-    guard let nAndK = readLine() else { fatalError("Bad input") }
-    let n = Int(nAndK.split(separator: " ").first ?? "0") ?? 0
-    let k = Int(nAndK.split(separator: " ").last ?? "0") ?? 0
-
-    guard let aTemp = readLine() else { fatalError("Bad input") }
-    let a: [Int] = aTemp.split(separator: " ").map {
-      if let aItem = Int($0.trimmingCharacters(in: .whitespacesAndNewlines)) {
-         return aItem
-        } else { fatalError("Bad input") }
+   
+    for _ in 1..<n {
+        index = indexOfNextLargest(array: arr, num: current * k, start: index + 1)
+        current = arr[index] - (current * (k - 1))
+        result.append(current)
     }
-
-    
-    let total = sequence(sum:a,repetations:k,numberOfItems:n)
-
-    fileHandle.write(total.data(using: .utf8)!)
-    fileHandle.write("\n".data(using: .utf8)!)
+    result.forEach {print($0, terminator:""); print(" ", terminator:"")}
+    print("")
 }
-
