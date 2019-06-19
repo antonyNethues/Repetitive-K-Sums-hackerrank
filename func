@@ -1,0 +1,56 @@
+import Foundation
+
+func sequence(sum:[Int],repetations:Int,numberOfItems:Int) -> String {
+    let sum = sum.sorted()
+    var x:[Int] = []
+    x.append((sum.first ?? 0)/repetations)
+    return getTheNextNumber(values: x, sum: sum, previousVal: x[0] , rep: repetations, numberOfItems: numberOfItems-1).reduce("", { (result, val) -> String in
+        return result + "\(val)" + " "
+    })
+}
+
+func getTheNextNumber(values:[Int],sum:[Int],previousVal:Int,rep:Int,numberOfItems:Int) -> [Int] {
+    var values = values
+    
+    if (numberOfItems < 1) {
+        return values
+    }
+
+    let z = sum.map { (val) -> Int in
+        return val - (previousVal * rep)
+        }.filter { (val) -> Bool in
+            return (val > 0)
+    }
+    values.append((z.first ?? 0) + previousVal)
+    
+    
+    return getTheNextNumber(values: values, sum: sum, previousVal: values.last ?? 0, rep: rep,numberOfItems: numberOfItems - 1)
+}
+
+// Enter your code here 
+let fileName = ProcessInfo.processInfo.environment["OUTPUT_PATH"]!
+FileManager.default.createFile(atPath: fileName, contents: nil, attributes: nil)
+let fileHandle = FileHandle(forWritingAtPath: fileName)!
+
+guard let numberOfTestCases = readLine() else { fatalError("Bad input") }
+let nm = Int(numberOfTestCases) ?? 0
+
+for _ in 0..<nm{
+    guard let nAndK = readLine() else { fatalError("Bad input") }
+    let n = Int(nAndK.split(separator: " ").first ?? "0") ?? 0
+    let k = Int(nAndK.split(separator: " ").last ?? "0") ?? 0
+
+    guard let aTemp = readLine() else { fatalError("Bad input") }
+    let a: [Int] = aTemp.split(separator: " ").map {
+      if let aItem = Int($0.trimmingCharacters(in: .whitespacesAndNewlines)) {
+         return aItem
+        } else { fatalError("Bad input") }
+    }
+
+    
+    let total = sequence(sum:a,repetations:k,numberOfItems:n)
+
+    fileHandle.write(total.data(using: .utf8)!)
+    fileHandle.write("\n".data(using: .utf8)!)
+}
+
