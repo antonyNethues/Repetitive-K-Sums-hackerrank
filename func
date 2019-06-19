@@ -28,7 +28,7 @@ for _ in 1...numTestCases {
    
     current = arr[0]/k
     result = [current]
-    index = 0
+    index = 0 
     if n==1 {
         result.forEach {print($0," ", terminator:"")}
         print("")
